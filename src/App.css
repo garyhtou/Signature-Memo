@@ -1,38 +1,77 @@
-.App {
-  text-align: center;
+@import "~antd/dist/antd.css";
+
+.background {
+	background-color: #dfffff;
+}
+.person-wrapper {
+	padding: 10vw;
+	padding-bottom: 3vw;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.person-name {
+	font-size: min(6em, 15vw);
+}
+.person-description {
+	font-size: min(3em, 7vw);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.person-add-wrapper {
+	/* background-color: white; */
+	/* border-radius: max(3vw, 20px); */
+	margin: max(6vw, 50px) 0;
+	/* padding: max(3vw, 10px); */
+	/* filter: drop-shadow(
+		max(0.25vw, 3px) max(0.25vw, 3px) max(0.5vw, 5px) #bdbdbd
+	); */
+
+	padding: max(3vw, 10px) 0;
+	border-width: 2px 0;
+	border-color: black;
+	border-style: dashed;
+}
+.person-add-container {
+	background-color: white;
+	border-radius: max(2vw, 20px);
+	padding: max(5vw, 20px);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.person-add-wrapper h1 {
+	font-size: 2em;
 }
 
-.App-link {
-  color: #61dafb;
+.person-messages {
+	margin-top: max(5vw, 30px);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.person-message {
+	background-color: white;
+	border-radius: max(3vw, 20px);
+	margin-bottom: max(3vw, 20px);
+	padding: max(3vw, 10px);
+}
+
+.person-message-content {
+	font-size: 2em;
+}
+
+.person-message-content-images {
+	margin: 2vw 0;
+}
+
+.person-message-avatar {
+	margin-right: max(1vw, 10px);
+	width: max(3vw, 30px);
+	height: max(3vw, 30px);
+}
+
+.person-message-senderName {
+	font-size: 1.5em;
+}
+
+.gh-link {
+	color: inherit;
+}
+
+.credit-sep {
+	padding: 0 10px;
 }
