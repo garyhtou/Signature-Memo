@@ -683,10 +683,14 @@ class App extends React.Component {
 														</section>
 													) : (
 														<Masonry
-															breakpointCols={{
-																default: 2,
-																1000: 1,
-															}}
+															breakpointCols={
+																Object.keys(this.state.messages).length < 4
+																	? { default: 1 }
+																	: {
+																			default: 2,
+																			1000: 1,
+																	  }
+															}
 															className="person-messages-masonry-grid"
 															columnClassName="person-messages-masonry-grid_column"
 														>
