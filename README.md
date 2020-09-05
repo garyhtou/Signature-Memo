@@ -1,8 +1,10 @@
 # Birthday
 
+A website to collect messages for your friend's upcoming birthday!
+
 ## Firebase Rules
 
-Realtime Database
+**Realtime Database**
 
 ```JSON
 {
@@ -28,7 +30,7 @@ Realtime Database
 }
 ```
 
-Storage
+**Storage**
 
 ```
 rules_version = '2';

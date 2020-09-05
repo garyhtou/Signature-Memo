@@ -16,18 +16,10 @@
 }
 
 .person-add-wrapper {
-	/* background-color: white; */
-	/* border-radius: max(3vw, 20px); */
-	margin: max(6vw, 50px) 0;
-	/* padding: max(3vw, 10px); */
-	/* filter: drop-shadow(
-		max(0.25vw, 3px) max(0.25vw, 3px) max(0.5vw, 5px) #bdbdbd
-	); */
-
 	padding: max(3vw, 10px) 0;
-	border-width: 2px 0;
+	/* border-width: 2px 0;
 	border-color: black;
-	border-style: dashed;
+	border-style: dashed; */
 }
 .person-add-container {
 	background-color: white;
@@ -39,14 +31,44 @@
 	font-size: 2em;
 }
 
+.person-add-messageWrapper {
+	margin-bottom: 24px;
+	text-align: right;
+}
+.person-add-message-formItem {
+	margin-bottom: 2px;
+}
+.person-add-message-mdIcon {
+	width: max(1.7vw, 30px);
+}
+
+.ant-upload {
+	border-radius: max(2vw, 20px) !important;
+}
+.person-add-message-input {
+	border-radius: max(1vw, 10px) !important;
+}
+
 .person-messages {
 	margin-top: max(5vw, 30px);
+}
+
+.person-messages-masonry-grid {
+	display: -webkit-box; /* Not needed if autoprefixing */
+	display: -ms-flexbox; /* Not needed if autoprefixing */
+	display: flex;
+	margin-left: calc(-1 * max(2vw, 30px)); /* gutter size offset */
+	width: auto;
+}
+.person-messages-masonry-grid_column {
+	padding-left: max(2vw, 30px); /* gutter size */
+	background-clip: padding-box;
 }
 
 .person-message {
 	background-color: white;
 	border-radius: max(3vw, 20px);
-	margin-bottom: max(3vw, 20px);
+	margin-bottom: max(2vw, 20px);
 	padding: max(3vw, 10px);
 }
 

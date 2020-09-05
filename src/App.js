@@ -6,12 +6,12 @@ import {
 	Spin,
 	Layout,
 	Avatar,
-	List,
 	Form,
 	Input,
 	Upload,
 	message,
 	Button,
+	Tooltip,
 } from "antd";
 import {
 	GithubOutlined,
@@ -20,6 +20,7 @@ import {
 } from "@ant-design/icons";
 import showdown from "showdown";
 import FbImageLibrary from "react-fb-image-grid";
+import Masonry from "react-masonry-css";
 
 class App extends React.Component {
 	constructor() {
@@ -38,11 +39,14 @@ class App extends React.Component {
 			addProfileLoading: false,
 			addPhotos: [],
 			messageSubmited: false,
+			submitLoading: false,
 		};
 
 		showdown.setFlavor("github");
 		showdown.setOption("simpleLineBreaks", true);
 	}
+
+	uploading = [];
 
 	showdownConverter = new showdown.Converter();
 
@@ -54,11 +58,16 @@ class App extends React.Component {
 				.on(
 					"value",
 					function (snapshot) {
+						console.log(snapshot.val());
 						if (snapshot.exists()) {
+							var messages =
+								typeof snapshot.val().messages !== "undefined"
+									? snapshot.val().messages
+									: {};
 							this.setState({
 								name: snapshot.val().name,
 								description: snapshot.val().description,
-								messages: snapshot.val().messages,
+								messages,
 								loading: false,
 							});
 						} else {
@@ -76,20 +85,50 @@ class App extends React.Component {
 		this.fbListener = undefined;
 	}
 
-	getBase64(img, callback) {
-		const reader = new FileReader();
-		reader.addEventListener("load", () => callback(reader.result));
-		reader.readAsDataURL(img);
-	}
+	allowedFiles = ["image/jpg", "image/jpeg", "image/png"];
 
 	render() {
 		return (
 			<div className="App">
 				<Helmet>
 					<title>Happy Birthday!</title>
+					<link
+						rel="stylesheet"
+						href={"/personCSS/" + this.state.page + ".css"}
+					/>
 				</Helmet>
 				{this.state.home ? (
-					<h1>home</h1>
+					<Layout style={{ minHeight: "100vh" }}>
+						<Layout.Content style={{ textAlign: "center" }}>
+							<div style={{ margin: "5vw" }}>
+								<h1 style={{ fontSize: "6em" }}>
+									Birthday{" "}
+									<span role="img" aria-label="Birthday Cupcake">
+										🧁
+									</span>
+								</h1>
+								<h1>Ccollect messages for your friend's upcoming birthday!</h1>
+							</div>
+							<div style={{ margin: "5vw" }}>
+								<a
+									href="https://github.com/garytou2/Birthday"
+									style={{ fontSize: "2em" }}
+								>
+									Check out on GitHub <GithubOutlined />
+								</a>
+							</div>
+						</Layout.Content>
+						<Layout.Footer style={{ textAlign: "center" }}>
+							<a
+								className="gh-link"
+								href="https://github.com/garytou2/Birthday"
+							>
+								Birthday <GithubOutlined />
+							</a>
+							<span className="credit-sep">|</span>
+							Developed by <a href="https://garytou.com">Gary Tou</a>
+						</Layout.Footer>
+					</Layout>
 				) : (
 					<>
 						{this.state.loading ? (
@@ -112,13 +151,31 @@ class App extends React.Component {
 								{this.state.error ? (
 									<>
 										<Helmet>
-											<title>
-												{this.state.name === ""
-													? "Happy Birthday!"
-													: "Happy Birthday " + this.state.name + "!"}
-											</title>
+											<title>Birthday - 404</title>
 										</Helmet>
-										<h1>error</h1>
+										<div
+											style={{
+												position: "absolute",
+												top: "50%",
+												left: "50%",
+												transform: "translate(-50%, -50%)",
+												textAlign: "center",
+											}}
+										>
+											<div className="error-flex">
+												<div>
+													<h1 style={{ fontSize: "4em" }}>Whoops!</h1>
+													<div style={{ fontSize: "1.1em" }}>
+														<p>
+															<code>
+																{window.location.pathname.split("/")[1]}
+															</code>{" "}
+															doesn't exists.
+														</p>
+													</div>
+												</div>
+											</div>
+										</div>
 									</>
 								) : (
 									<>
@@ -147,6 +204,7 @@ class App extends React.Component {
 																		className="person-add-form"
 																		layout="vertical"
 																		onFinish={function (values) {
+																			this.setState({ submitLoading: true });
 																			values.photo =
 																				typeof this.state.addProfileURL !==
 																				"undefined"
@@ -196,7 +254,7 @@ class App extends React.Component {
 																				});
 																			}
 
-																			if (!error) {
+																			const addToFB = function () {
 																				firebase
 																					.database()
 																					.ref(
@@ -211,16 +269,50 @@ class App extends React.Component {
 																						function () {
 																							this.setState({
 																								messageSubmited: true,
+																								submitLoading: false,
+																							});
+																						}.bind(this)
+																					)
+																					.catch(
+																						function (error) {
+																							message.error(
+																								"Error:\n" + error.message
+																							);
+																							this.setState({
+																								submitLoading: false,
 																							});
 																						}.bind(this)
 																					);
+																			}.bind(this);
+
+																			if (!error) {
+																				if (this.uploading.length > 0) {
+																					message.info(
+																						"It'll take a sec. Files are still uploading!"
+																					);
+																					var checker = setInterval(
+																						function () {
+																							console.log("checking");
+																							if (this.uploading.length === 0) {
+																								clearInterval(checker);
+																								addToFB();
+																							}
+																						}.bind(this),
+																						100
+																					);
+																				} else {
+																					addToFB();
+																				}
+																			} else {
+																				this.setState({
+																					submitLoading: false,
+																				});
 																			}
 																		}.bind(this)}
 																	>
 																		<Form.Item>
 																			<h1>
-																				Share your message with{" "}
-																				{this.state.name}
+																				Share a message with {this.state.name}
 																			</h1>
 																		</Form.Item>
 																		<Form.Item
@@ -230,20 +322,50 @@ class App extends React.Component {
 																			validateStatus={this.state.nameValidate}
 																			hasFeedback={this.state.nameFeedback}
 																		>
-																			<Input placeholder="Bill" />
+																			<Input
+																				placeholder="Bill"
+																				className="person-add-message-input"
+																			/>
 																		</Form.Item>
-																		<Form.Item
-																			label="Your message"
-																			required
-																			name="message"
-																			help={this.state.messageHelp}
-																			validateStatus={
-																				this.state.messageValidate
-																			}
-																			hasFeedback={this.state.messageFeedback}
-																		>
-																			<Input.TextArea rows={5} />
-																		</Form.Item>
+																		<div className="person-add-messageWrapper">
+																			<Form.Item
+																				label="Your message"
+																				required
+																				name="message"
+																				help={this.state.messageHelp}
+																				validateStatus={
+																					this.state.messageValidate
+																				}
+																				hasFeedback={this.state.messageFeedback}
+																				className="person-add-message-formItem"
+																			>
+																				<Input.TextArea
+																					rows={5}
+																					className="person-add-message-input"
+																					style={{ resize: "none" }}
+																					placeholder={
+																						"Yo " + this.state.name + "!"
+																					}
+																				></Input.TextArea>
+																			</Form.Item>
+																			<Tooltip
+																				title={
+																					<p>
+																						<a
+																							href="https://www.markdownguide.org/getting-started/"
+																							style={{ color: "inherit" }}
+																						>
+																							Markdown supported
+																						</a>
+																					</p>
+																				}
+																			>
+																				<img
+																					src="/markdown.svg"
+																					className="person-add-message-mdIcon"
+																				/>
+																			</Tooltip>
+																		</div>
 																		<Form.Item
 																			label="A picture of you!"
 																			name="photo"
@@ -253,8 +375,12 @@ class App extends React.Component {
 																				listType="picture-card"
 																				className="avatar-uploader"
 																				showUploadList={false}
-																				customRequest={function (upload) {
-																					console.log(upload);
+																				customRequest={function ({
+																					onSuccess,
+																					onError,
+																					file,
+																				}) {
+																					console.log(file);
 																					this.setState({
 																						addProfileLoading: true,
 																					});
@@ -265,42 +391,92 @@ class App extends React.Component {
 																						"/" +
 																						Date.now() +
 																						"_" +
-																						upload.file.uid +
+																						file.uid +
 																						"_" +
-																						upload.file.name;
-																					firebase
-																						.storage()
-																						.ref(path)
-																						.put(upload.file)
-																						.then(
-																							function (snapshot) {
-																								snapshot.ref
-																									.getDownloadURL()
-																									.then(
-																										function (downloadURL) {
-																											this.setState({
-																												addProfileURL: downloadURL,
-																												addProfileLoading: false,
-																											});
-																											message.success(
-																												upload.file.name +
-																													" uploaded successfully"
-																											);
-																											console.log(
-																												"File available at",
-																												downloadURL
-																											);
-																										}.bind(this)
-																									);
-																							}.bind(this)
+																						file.name;
+
+																					this.uploading.push(path);
+
+																					if (
+																						this.allowedFiles.includes(
+																							file.type
 																						)
-																						.catch(function (error) {
-																							message.error(
-																								upload.file.name +
-																									" upload failed.\n" +
-																									error.message
+																					) {
+																						firebase
+																							.storage()
+																							.ref(path)
+																							.put(file)
+																							.then(
+																								function (snapshot) {
+																									snapshot.ref
+																										.getDownloadURL()
+																										.then(
+																											function (downloadURL) {
+																												this.setState({
+																													addProfileURL: downloadURL,
+																													addProfileLoading: false,
+																												});
+																												message.success(
+																													file.name +
+																														" uploaded successfully"
+																												);
+																												const index = this.uploading.indexOf(
+																													path
+																												);
+																												if (index !== -1) {
+																													this.uploading.splice(
+																														index,
+																														1
+																													);
+																												}
+																												console.log(
+																													"File available at",
+																													downloadURL
+																												);
+																												onSuccess(downloadURL);
+																											}.bind(this)
+																										);
+																								}.bind(this)
+																							)
+																							.catch(
+																								function (error) {
+																									this.setState({
+																										addProfileLoading: false,
+																									});
+																									message.error(
+																										"Error:\n" + error.message
+																									);
+																									onError(
+																										"Error:\n" + error.message
+																									);
+																									const index = this.uploading.indexOf(
+																										path
+																									);
+																									if (index !== -1) {
+																										this.uploading.splice(
+																											index,
+																											1
+																										);
+																									}
+																								}.bind(this)
 																							);
+																					} else {
+																						this.setState({
+																							addProfileLoading: false,
 																						});
+																						message.error(
+																							"You can only upload jpg/jpeg/png."
+																						);
+																						onError(
+																							"You can only upload jpg/jpeg/png."
+																						);
+																						const index = this.uploading.indexOf(
+																							path
+																						);
+																						if (index !== -1) {
+																							this.uploading.splice(index, 1);
+																						}
+																					}
 																				}.bind(this)}
 																			>
 																				{this.state.addProfileURL ? (
@@ -348,43 +524,89 @@ class App extends React.Component {
 																						file.uid +
 																						"_" +
 																						file.name;
-																					firebase
-																						.storage()
-																						.ref(path)
-																						.put(file)
-																						.then(
-																							function (snapshot) {
-																								snapshot.ref
-																									.getDownloadURL()
-																									.then(
-																										function (downloadURL) {
-																											var newAddPhotos = this.state.addPhotos.concat(
-																												downloadURL
-																											);
-																											this.setState({
-																												addPhotos: newAddPhotos,
-																											});
-																											message.success(
-																												file.name +
-																													" uploaded successfully"
-																											);
-																											console.log(
-																												"File available at",
-																												downloadURL
-																											);
-																											onSuccess(downloadURL);
-																										}.bind(this)
-																									);
-																							}.bind(this)
+
+																					this.uploading.push(path);
+
+																					if (
+																						this.allowedFiles.includes(
+																							file.type
 																						)
-																						.catch(function (error) {
-																							message.error(
-																								file.name +
-																									" upload failed.\n" +
-																									error.message
+																					) {
+																						firebase
+																							.storage()
+																							.ref(path)
+																							.put(file)
+																							.then(
+																								function (snapshot) {
+																									snapshot.ref
+																										.getDownloadURL()
+																										.then(
+																											function (downloadURL) {
+																												var newAddPhotos = this.state.addPhotos.concat(
+																													downloadURL
+																												);
+																												this.setState({
+																													addPhotos: newAddPhotos,
+																												});
+																												const index = this.uploading.indexOf(
+																													path
+																												);
+																												if (index !== -1) {
+																													this.uploading.splice(
+																														index,
+																														1
+																													);
+																												}
+																												message.success(
+																													file.name +
+																														" uploaded successfully"
+																												);
+																												console.log(
+																													"File available at",
+																													downloadURL
+																												);
+																												onSuccess(downloadURL);
+																											}.bind(this)
+																										);
+																								}.bind(this)
+																							)
+																							.catch(
+																								function (error) {
+																									message.error(
+																										file.name +
+																											" upload failed.\n" +
+																											error.message
+																									);
+																									const index = this.uploading.indexOf(
+																										path
+																									);
+																									if (index !== -1) {
+																										this.uploading.splice(
+																											index,
+																											1
+																										);
+																									}
+																									onError(
+																										file.name +
+																											" upload failed.\n" +
+																											error.message
+																									);
+																								}.bind(this)
 																							);
-																							onError(error.message);
-																						});
+																					} else {
+																						message.error(
+																							"You can only upload jpg/jpeg/png."
+																						);
+																						onError(
+																							"You can only upload jpg/jpeg/png."
+																						);
+																						const index = this.uploading.indexOf(
+																							path
+																						);
+																						if (index !== -1) {
+																							this.uploading.splice(index, 1);
+																						}
+																					}
 																				}.bind(this)}
 																				onChange={({ newAddPhotos }) =>
 																					this.setState({ newAddPhotos })
@@ -400,7 +622,11 @@ class App extends React.Component {
 																			</Upload.Dragger>
 																		</Form.Item>
 																		<Form.Item>
-																			<Button type="primary" htmlType="submit">
+																			<Button
+																				type="primary"
+																				htmlType="submit"
+																				loading={this.state.submitLoading}
+																			>
 																				Submit!
 																			</Button>
 																		</Form.Item>
@@ -415,108 +641,107 @@ class App extends React.Component {
 													<></>
 												)}
 												<div className="person-messages">
-													<List
-														grid={{
-															gutter: 20,
-															xs: 1,
-															sm: 1,
-															md: 1,
-															lg: 1,
-															xl: 2,
-															xxl: 2,
-														}}
-														dataSource={Object.keys(
-															this.state.messages
-														).reverse()}
-														renderItem={(pushKey) => (
-															<List.Item>
-																<section
-																	className="person-message"
-																	key={pushKey}
-																>
-																	{/* <pre>{this.state.messages[pushKey].message}</pre> */}
-																	<div className="person-message-content">
-																		<div
-																			className="person-message-content-text"
-																			dangerouslySetInnerHTML={{
-																				__html: this.showdownConverter.makeHtml(
-																					this.state.messages[pushKey].message
-																				),
+													{Object.keys(this.state.messages).length === 0 ? (
+														<section className="person-message">
+															<div className="person-message-content">
+																<div className="person-message-content-text" />
+																<p>
+																	<strong>No messages yet!</strong>
+																</p>
+																<p>
+																	Visit{" "}
+																	<a
+																		href={
+																			window.location.protocol +
+																			"//" +
+																			window.location.hostname +
+																			(window.location.port
+																				? ":" + window.location.port
+																				: "") +
+																			"/" +
+																			window.location.pathname.split("/")[1] +
+																			"/" +
+																			"add"
+																		}
+																	>
+																		<code>
+																			{window.location.protocol +
+																				"//" +
+																				window.location.hostname +
+																				(window.location.port
+																					? ":" + window.location.port
+																					: "") +
+																				"/" +
+																				window.location.pathname.split("/")[1] +
+																				"/" +
+																				"add"}
+																		</code>
+																	</a>{" "}
+																	to add your message here!
+																</p>
+															</div>
+														</section>
+													) : (
+														<Masonry
+															breakpointCols={{
+																default: 2,
+																1000: 1,
+															}}
+															className="person-messages-masonry-grid"
+															columnClassName="person-messages-masonry-grid_column"
+														>
+															{Object.keys(this.state.messages)
+																.reverse()
+																.map((pushKey) => (
+																	<section
+																		className="person-message"
+																		key={pushKey}
+																	>
+																		<div className="person-message-content">
+																			<div
+																				className="person-message-content-text"
+																				dangerouslySetInnerHTML={{
+																					__html: this.showdownConverter.makeHtml(
+																						this.state.messages[pushKey].message
+																					),
+																				}}
+																			/>
+																			<div className="person-message-content-images">
+																				<FbImageLibrary
+																					images={
+																						this.state.messages[pushKey].images
+																					}
+																					renderOverlay={() => (
+																						<span>Show Image</span>
+																					)}
+																				/>
+																			</div>
+																		</div>
+																		<footer
+																			style={{
+																				display: "flex",
+																				alignItems: "center",
 																			}}
-																		/>
-																		<div className="person-message-content-images">
-																			<FbImageLibrary
-																				images={
-																					this.state.messages[pushKey].images
+																		>
+																			<Avatar
+																				className="person-message-avatar"
+																				src={
+																					typeof this.state.messages[pushKey]
+																						.photo !== "undefined" &&
+																					this.state.messages[pushKey].photo !==
+																						""
+																						? this.state.messages[pushKey].photo
+																						: "https://www.gravatar.com/avatar/?d=mp"
 																				}
 																			/>
-																		</div>
-																	</div>
-																	<footer
-																		style={{
-																			display: "flex",
-																			alignItems: "center",
-																		}}
-																	>
-																		<Avatar
-																			className="person-message-avatar"
-																			src={
-																				typeof this.state.messages[pushKey]
-																					.photo !== "undefined" &&
-																				this.state.messages[pushKey].photo !==
-																					""
-																					? this.state.messages[pushKey].photo
-																					: "https://www.gravatar.com/avatar/?d=mp"
-																			}
-																		/>
-																		<span className="person-message-senderName">
-																			{this.state.messages[pushKey].name}
-																		</span>
-																	</footer>
-																</section>
-															</List.Item>
-														)}
-													/>
-
-													{/* {Object.keys(this.state.messages).map((pushKey) => (
-														<section className="person-message" key={pushKey}>
-															<div className="person-message-content">
-																<div
-																	className="person-message-content-text"
-																	dangerouslySetInnerHTML={{
-																		__html: this.showdownConverter.makeHtml(
-																			this.state.messages[pushKey].message
-																		),
-																	}}
-																/>
-																<div className="person-message-content-images">
-																	<FbImageLibrary
-																		images={this.state.messages[pushKey].images}
-																	/>
-																</div>
-															</div>
-															<footer
-																style={{
-																	display: "flex",
-																	alignItems: "center",
-																}}
-															>
-																<Avatar
-																	className="person-message-avatar"
-																	src={
-																		typeof this.state.messages[pushKey]
-																			.photo !== "undefined" &&
-																		this.state.messages[pushKey].photo !== ""
-																			? this.state.messages[pushKey].photo
-																			: "https://www.gravatar.com/avatar/?d=mp"
-																	}
-																/>
-																<span className="person-message-senderName">
-																	{this.state.messages[pushKey].name}
-																</span>
-															</footer>
-														</section>
-													))} */}
+																			<span className="person-message-senderName">
+																				{this.state.messages[pushKey].name}
+																			</span>
+																		</footer>
+																	</section>
+																))}
+														</Masonry>
+													)}
 												</div>
 											</Layout.Content>
 											<Layout.Footer
@@ -526,26 +751,11 @@ class App extends React.Component {
 												<a
 													className="gh-link"
 													href="https://github.com/garytou2/Birthday"
-													onClick={function () {
-														firebase.analytics().logEvent("visit_github_repo", {
-															user: window.location.pathname.split("/")[1],
-														});
-													}}
 												>
 													Birthday <GithubOutlined />
 												</a>
 												<span className="credit-sep">|</span>
-												Developed by{" "}
-												<a
-													href="https://garytou.com"
-													onClick={function () {
-														firebase.analytics().logEvent("visit_garytou_com", {
-															user: window.location.pathname.split("/")[1],
-														});
-													}}
-												>
-													Gary Tou
-												</a>
+												Developed by <a href="https://garytou.com">Gary Tou</a>
 											</Layout.Footer>
 										</Layout>
 									</>
