@@ -3,6 +3,7 @@
 .background {
 	background-color: #dfffff;
 }
+
 .person-wrapper {
 	padding: 10vw;
 	padding-bottom: 3vw;
@@ -96,4 +97,7 @@
 
 .credit-sep {
 	padding: 0 10px;
+}
+.ant-layout-footer {
+	background-color: transparent;
 }

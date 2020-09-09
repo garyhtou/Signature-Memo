@@ -1,0 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap");
+
+.background {
+	background-color: #f9e8ff;
+	background-image: linear-gradient(160deg, pink, lightpink);
+}
+.person-name,
+.person-description,
+.person-message-senderName {
+	font-family: "Dancing Script", cursive;
+}

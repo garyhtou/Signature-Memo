@@ -186,8 +186,11 @@ class App extends React.Component {
 													: "Happy Birthday " + this.state.name + "!"}
 											</title>
 										</Helmet>
-										<Layout style={{ minHeight: "100vh" }} className="person">
-											<Layout.Content className="person-wrapper background">
+										<Layout
+											style={{ minHeight: "100vh" }}
+											className="person background"
+										>
+											<Layout.Content className="person-wrapper">
 												<h1 className="person-name">
 													Happy Birthday, {this.state.name}!
 												</h1>
@@ -748,10 +751,7 @@ class App extends React.Component {
 													)}
 												</div>
 											</Layout.Content>
-											<Layout.Footer
-												style={{ textAlign: "center" }}
-												className="background"
-											>
+											<Layout.Footer style={{ textAlign: "center" }}>
 												<a
 													className="gh-link"
 													href="https://github.com/garytou2/Birthday"
