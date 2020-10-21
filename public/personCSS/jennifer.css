@@ -1,0 +1,9 @@
+.background {
+	background-color: #f9e8ff;
+	background-image: url("/images/jennifer-background.jpg");
+}
+.person-name,
+.person-description {
+	color: #ffd700;
+	text-shadow: 3px 3px #88e6f2;
+}
