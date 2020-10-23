@@ -1,6 +1,7 @@
 .background {
 	background-color: #f9e8ff;
 	background-image: url("/images/jennifer-background.jpg");
+  background-attachment: fixed;
 }
 .person-name,
 .person-description {
