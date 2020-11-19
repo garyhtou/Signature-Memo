@@ -1,6 +1,6 @@
 {
-	"name": "birthday",
-	"description": "A website to collect messages for your friend's upcoming birthday!",
+	"name": "signature-memo",
+	"description": "A website to collectively sign a virtual card, whether it's for an upcoming birthday or just to say thank you!",
 	"version": "0.1.0",
 	"private": true,
 	"author": "Gary Tou <garytou2@gmail.com> (https://garytou.com)",

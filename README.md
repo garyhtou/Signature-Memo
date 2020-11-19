@@ -1,6 +1,6 @@
-# Birthday
+# Signature-Memo
 
-A website to collect messages for your friend's upcoming birthday!
+A website to collectively sign a virtual card, whether it's for an upcoming birthday or just to say thank you!
 
 ## Firebase Rules
 

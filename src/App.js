@@ -40,6 +40,8 @@ class App extends React.Component {
 			addPhotos: [],
 			messageSubmited: false,
 			submitLoading: false,
+			type: "",
+			title: "",
 		};
 
 		showdown.setFlavor("github");
@@ -64,10 +66,22 @@ class App extends React.Component {
 								typeof snapshot.val().messages !== "undefined"
 									? snapshot.val().messages
 									: {};
+							var title =
+								(snapshot.val().type === "birthday"
+									? "Happy Birthday"
+									: snapshot.val().type === "thankyou"
+									? "Thank You"
+									: "") +
+								(snapshot.val().name === ""
+									? "!"
+									: ", " + snapshot.val().name + "!");
+
 							this.setState({
 								name: snapshot.val().name,
 								description: snapshot.val().description,
 								messages,
+								type: snapshot.val().type,
+								title,
 								loading: false,
 							});
 						} else {
@@ -91,7 +105,7 @@ class App extends React.Component {
 		return (
 			<div className="App">
 				<Helmet>
-					<title>Happy Birthday!</title>
+					<title>Special Delivery!</title>
 					<link
 						rel="stylesheet"
 						href={"/personCSS/" + this.state.page + ".css"}
@@ -102,16 +116,19 @@ class App extends React.Component {
 						<Layout.Content style={{ textAlign: "center" }}>
 							<div style={{ margin: "5vw" }}>
 								<h1 style={{ fontSize: "6em" }}>
-									Birthday{" "}
+									Signature Memo{" "}
 									<span role="img" aria-label="Birthday Cupcake">
 										🧁
 									</span>
 								</h1>
-								<h1>Ccollect messages for your friend's upcoming birthday!</h1>
+								<h1>
+									A website to collectively sign a virtual card, whether it's
+									for an upcoming birthday or just to say thank you!
+								</h1>
 							</div>
 							<div style={{ margin: "5vw" }}>
 								<a
-									href="https://github.com/garytou2/Birthday"
+									href="https://github.com/garytou2/Signature-Memo"
 									style={{ fontSize: "2em" }}
 								>
 									Check out on GitHub <GithubOutlined />
@@ -121,9 +138,9 @@ class App extends React.Component {
 						<Layout.Footer style={{ textAlign: "center" }}>
 							<a
 								className="gh-link"
-								href="https://github.com/garytou2/Birthday"
+								href="https://github.com/garytou2/Signature-Memo"
 							>
-								Birthday <GithubOutlined />
+								Signature Memo <GithubOutlined />
 							</a>
 							<span className="credit-sep">|</span>
 							Developed by <a href="https://garytou.com">Gary Tou</a>
@@ -151,7 +168,7 @@ class App extends React.Component {
 								{this.state.error ? (
 									<>
 										<Helmet>
-											<title>Birthday - 404</title>
+											<title>Signature Memo - 404</title>
 										</Helmet>
 										<div
 											style={{
@@ -180,20 +197,14 @@ class App extends React.Component {
 								) : (
 									<>
 										<Helmet>
-											<title>
-												{this.state.name === ""
-													? "Happy Birthday!"
-													: "Happy Birthday " + this.state.name + "!"}
-											</title>
+											<title>{this.state.title}</title>
 										</Helmet>
 										<Layout
 											style={{ minHeight: "100vh" }}
 											className="person background"
 										>
 											<Layout.Content className="person-wrapper">
-												<h1 className="person-name">
-													Happy Birthday, {this.state.name}!
-												</h1>
+												<h1 className="person-name">{this.state.title}</h1>
 												<h3 className="person-description">
 													{this.state.description}
 												</h3>
@@ -754,9 +765,9 @@ class App extends React.Component {
 											<Layout.Footer style={{ textAlign: "center" }}>
 												<a
 													className="gh-link"
-													href="https://github.com/garytou2/Birthday"
+													href="https://github.com/garytou2/Signature-Memo"
 												>
-													Birthday <GithubOutlined />
+													Signature Memo <GithubOutlined />
 												</a>
 												<span className="credit-sep">|</span>
 												Developed by <a href="https://garytou.com">Gary Tou</a>
