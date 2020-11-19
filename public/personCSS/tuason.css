@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Dancing+Script&display=swap");
+
+.background {
+	/* background-color: #007bff; */
+	background: linear-gradient(127deg, #efd5ff 0%, #515ada 100%);
+}
+.person-name,
+.person-description,
+.person-message-senderName {
+	font-family: "Dancing Script", cursive;
+}
+
+.ant-layout-footer,
+.ant-layout-footer a {
+	color: white;
+}
