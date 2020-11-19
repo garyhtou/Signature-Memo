@@ -105,7 +105,7 @@ class App extends React.Component {
 		return (
 			<div className="App">
 				<Helmet>
-					<title>Special Delivery!</title>
+					<title>Signature Memo!</title>
 					<link
 						rel="stylesheet"
 						href={"/personCSS/" + this.state.page + ".css"}
