@@ -21,6 +21,8 @@ import {
 import showdown from "showdown";
 import FbImageLibrary from "react-fb-image-grid";
 import Masonry from "react-masonry-css";
+import ReactAudioPlayer from "react-audio-player";
+import ReactPlayer from "react-player";
 
 class App extends React.Component {
 	constructor() {
@@ -83,6 +85,10 @@ class App extends React.Component {
 								type: snapshot.val().type,
 								title,
 								loading: false,
+								audioUrl:
+									typeof snapshot.val().audio === "undefined"
+										? ""
+										: snapshot.val().audio,
 							});
 						} else {
 							this.setState({ error: true, loading: false });
@@ -208,6 +214,23 @@ class App extends React.Component {
 												<h3 className="person-description">
 													{this.state.description}
 												</h3>
+												{this.state.audioUrl !== "" ? (
+													<ReactAudioPlayer
+														src={this.state.audioUrl}
+														autoPlay
+														controls
+														className="audioPlayer"
+														volume={0.5}
+													/>
+												) : // <ReactPlayer
+												// 	url={this.state.audioUrl}
+												// 	controls={true}
+												// 	volume={0.75}
+												// 	pip={true}
+												// 	width="100%"
+												// 	playsinline={true}
+												// />
+												null}
 												{this.state.add ? (
 													<>
 														{!this.state.messageSubmited ? (
