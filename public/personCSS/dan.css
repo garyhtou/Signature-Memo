@@ -1,0 +1,21 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito&display=swap");
+
+.background {
+	background-color: #faa499;
+	background-image: linear-gradient(
+		319deg,
+		#faa499 0%,
+		#f7dd85 37%,
+		#ffc55c 100%
+	);
+}
+.person-name,
+.person-description,
+.person-message-senderName {
+	font-family: "Nunito", sans-serif;
+}
+
+/* .ant-layout-footer,
+.ant-layout-footer a {
+	color: white;
+} */
