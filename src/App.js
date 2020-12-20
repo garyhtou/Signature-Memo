@@ -134,7 +134,7 @@ class App extends React.Component {
 							</div>
 							<div style={{ margin: "5vw" }}>
 								<a
-									href="https://github.com/garytou2/Signature-Memo"
+									href="https://github.com/garyhtou/Signature-Memo"
 									style={{ fontSize: "2em" }}
 								>
 									Check out on GitHub <GithubOutlined />
@@ -144,7 +144,7 @@ class App extends React.Component {
 						<Layout.Footer style={{ textAlign: "center" }}>
 							<a
 								className="gh-link"
-								href="https://github.com/garytou2/Signature-Memo"
+								href="https://github.com/garyhtou/Signature-Memo"
 							>
 								Signature Memo <GithubOutlined />
 							</a>
@@ -788,7 +788,7 @@ class App extends React.Component {
 											<Layout.Footer style={{ textAlign: "center" }}>
 												<a
 													className="gh-link"
-													href="https://github.com/garytou2/Signature-Memo"
+													href="https://github.com/garyhtou/Signature-Memo"
 												>
 													Signature Memo <GithubOutlined />
 												</a>
