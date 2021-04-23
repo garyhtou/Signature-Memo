@@ -1,0 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+.background {
+	background-image: url("/images/jaz-background.jpg");
+  background-attachment: fixed;
+}
+.person-name,
+.person-description,
+.person-message-senderName {
+	text-shadow: 3px 3px #935fc9;
+  font-family: 'Varela Round', sans-serif;
+}
