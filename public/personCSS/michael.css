@@ -2,6 +2,7 @@
 	background-color: #254B56;
 	background-image: url("/images/michael-background.jpg") ;
   background-attachment: fixed;
+	background-position: center bottom;
 }
 .person-name,
 .person-description {
