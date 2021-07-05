@@ -1,0 +1,10 @@
+.background {
+	background-color: #f9e8ff;
+	background-image: url("/images/michael-background.jpg") ;
+  background-attachment: fixed;
+}
+.person-name,
+.person-description {
+	color: #C8D6CA;
+	text-shadow: 3px 3px #4A6356;
+}
